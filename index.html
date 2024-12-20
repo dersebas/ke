@@ -13,7 +13,7 @@
             width: 100%;
             margin: 0;
             padding: 0;
-            background: url('https://images.unsplash.com/photo-1513569771920-c9e1d31714af?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8aGlnaCUyMHJlcyUyMGRhcmt8ZW58MHx8MHx8fDA%3D') no-repeat center center fixed;
+            background: url('https://images.unsplash.com/photo-1513569771920-c9e1d31714af?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8aGlnaCUyMHJlcyUyMGRhcmt8ZW58MHx8MHx8fDA%3') no-repeat center center fixed;
             background-size: cover;
             font-family: 'Poppins', sans-serif;
             display: flex; 
@@ -46,7 +46,7 @@
         }
 
         input, select, button {
-            width: 80%;
+            width: 100%;
             height: 50px;
             margin: 15px 0;
             padding: 0 15px;
@@ -213,72 +213,76 @@
     <div id="totalWeightBox">Gesamtgewicht: 0 g</div>
 
     <div id="portionLabel">Menge: <span id="portionSize">0</span> Lebensmittel</div>
+
+    <input type="number" id="keFactor" placeholder="KE Faktor" value="1" step="0.1" />
 </div>
 
 <script>
     let foodData = {
-        "Vollkornbrot": { keFactor: 3.3, type: "neutral" },
-        "Vollkornbrötchen": { keFactor: 3.3, type: "neutral" },
-        "Weizenmischbrot": { keFactor: 4, type: "schnell" },
-        "Roggenmischbrot": { keFactor: 4, type: "neutral" },
-        "Weizenbrötchen": { keFactor: 5, type: "neutral" },
-        "Nusszopf": { keFactor: 5, type: "neutral" },
-        "Berliner": { keFactor: 5.5, type: "schnell" },
-        "Schokocrossiant": { keFactor: 4, type: "schnell" },
-        "Crossiant": { keFactor: 3.8, type: "neutral" },
-        "Laugenbrezel": { keFactor: 6.3, type: "neutral" },
-        "Laugenbrötchen": { keFactor: 4.7, type: "neutral" },
-        "Winzerbrötchen": { keFactor: 3.7, type: "neutral" },
-        "Mohnbrötchen": { keFactor: 4.2, type: "neutral" },
-        "Schusterjunge": { keFactor: 4.8, type: "neutral" },
-        "Backi": { keFactor: 5.6, type: "neutral" },
-        "Flute": { keFactor: 5.5, type: "neutral" },
-        "Opa`s Landbrot": { keFactor: 5, type: "neutral" },
-        "Urkruste": { keFactor: 4.6, type: "neutral" },
-        "Herzschlang": { keFactor: 4.1, type: "neutral" },
-        "Kartoffeln": { keFactor: 1.54, type: "neutral" },
-        "Kartoffelpüree": { keFactor: 1, type: "neutral" },
-        "Kartoffelpuffer": { keFactor: 2.22, type: "neutral" },
-        "Pommes": { keFactor: 5, type: "neutral" },
-        "Kroketten": { keFactor: 2.5, type: "neutral" },
-        "Gnocchi": { keFactor: 3.33, type: "neutral" },
-        "Vollkornreis": { keFactor: 8.3, type: "neutral" },
-        "Reis": { keFactor: 2.5, type: "neutral" },
-        "Tortellini": { keFactor: 2.85, type: "neutral" },
-        "Haferflocken": { keFactor: 6.66, type: "neutral" },
         "Apfel": { keFactor: 1.1, type: "neutral" },
+        "Apfelsine": { keFactor: 1.0, type: "neutral" },
+        "Backi": { keFactor: 5.6, type: "neutral" },
         "Banane": { keFactor: 1.25, type: "neutral" },
+        "Berliner": { keFactor: 5.5, type: "schnell" },
         "Birne": { keFactor: 1.17, type: "neutral" },
+        "Bratkartoffel": { keFactor: 1.8, type: "neutral" },
+        "Bionade": { keFactor: 0.5, type: "schnell" },
         "Brombeere": { keFactor: 0.625, type: "neutral" },
+        "Crossiant": { keFactor: 3.8, type: "neutral" },
+        "Döner": { keFactor: 1.72, type: "langsam", info: "1 Döner ca.350g" },
         "Erdbeeren": { keFactor: 0.55, type: "neutral" },
+        "Flute": { keFactor: 5.5, type: "neutral" },
+        "Gnocchi": { keFactor: 2.1, type: "neutral" },
+        "Haferflocken": { keFactor: 6.66, type: "neutral" },
         "Heidelbeeren": { keFactor: 0.625, type: "neutral" },
+        "Herzschlang": { keFactor: 4.1, type: "neutral" },
         "Himbeeren": { keFactor: 0.476, type: "neutral" },
+        "Honig": { keFactor: 8.333, type: "schnell" },
         "Johannisbeere (rot)": { keFactor: 0.5, type: "neutral" },
         "Johannisbeere (schwarz)": { keFactor: 0.667, type: "neutral" },
+        "Kartoffeln": { keFactor: 1.54, type: "neutral" },
+        "Kartoffelpuffer": { keFactor: 2.22, type: "neutral" },
+        "Kartoffelpüree": { keFactor: 1, type: "neutral" },
+        "Kroketten": { keFactor: 2.5, type: "neutral", info: "8 Stück ca 160g" },
+        "Ketchup": { keFactor: 2.5, type: "neutral" },
         "Kiwi": { keFactor: 0.833, type: "neutral" },
-        "Mango": { keFactor: 1.25, type: "neutral" },
-        "Nektariene": { keFactor: 1.25, type: "neutral" },
+        "Kroketten": { keFactor: 2.5, type: "neutral" },
+        "Laugenbrezel": { keFactor: 6.3, type: "neutral" },
+        "Laugenbrötchen": { keFactor: 4.7, type: "neutral" },
+        "Mais": { keFactor: 1.667, type: "neutral" },
         "Mandariene": { keFactor: 0.74, type: "neutral" },
+        "Mango": { keFactor: 1.25, type: "neutral" },
+        "Maultaschen": { keFactor: 2, type: "neutral", info: "2 Maultschen ca 100g" },
+        "Milch": { keFactor: 0.5, type: "neutral" },
+        "Milch": { keFactor: 5, type: "neutral" },
+        "Mohnbrötchen": { keFactor: 4.2, type: "neutral" },
+        "Nektariene": { keFactor: 1.25, type: "neutral" },
+        "Nuss-Nougat-Creme": { keFactor: 5, type: "langsam" },
+        "Nusszopf": { keFactor: 5, type: "neutral" },
+        "Opa`s Landbrot": { keFactor: 5, type: "neutral" },
         "Orange": { keFactor: 0.667, type: "neutral" },
+        "Orangen": { keFactor: 10, type: "langsam" },
+        "Orangensaft": { keFactor: 0.91, type: "schnell" },
         "Pfirsich": { keFactor: 0.883, type: "neutral" },
+        "Pizza": { keFactor: 2.85, type: "langsam", info: "1 Pizza ca 350g bei 24cm" },
+        "Pommes": { keFactor: 5, type: "neutral" },
+        "Reis": { keFactor: 2.5, type: "neutral" },
+        "Roggenmischbrot": { keFactor: 4, type: "neutral" },
+        "Schokolade": { keFactor: 60, type: "schnell" },
+        "Schokocrossiant": { keFactor: 4, type: "schnell" },
+        "Schusterjunge": { keFactor: 4.8, type: "neutral" },
+        "Schnitzel": { keFactor: 1.25, type: "langsam", info: "1 kleines Schnitzel = 200g" },
+        "Traubenzucker": { keFactor: 100, type: "schnell" },
+        "Tortellini": { keFactor: 2.85, type: "neutral" },
+        "Urkruste": { keFactor: 4.6, type: "neutral" },
+        "Vollkornbrot": { keFactor: 3.3, type: "neutral" },
+        "Vollkornbrötchen": { keFactor: 3.3, type: "neutral" },
+        "Vollkornreis": { keFactor: 8.3, type: "neutral" },
         "Wassermelone": { keFactor: 0.526, type: "neutral" },
         "Weintraube": { keFactor: 1.538, type: "neutral" },
-        "Milch": { keFactor: 0.5, type: "neutral" },
-        "Honig": { keFactor: 8.333, type: "schnell" },
-        "Nuss-Nougat-Creme": { keFactor: 5, type: "langsam" },
-        "Ketchup": { keFactor: 2.5, type: "neutral" },
-        "Mais": { keFactor: 1.667, type: "neutral" },
-        "Orangensaft": { keFactor: 0.91, type: "schnell" },
-        "Bionade": { keFactor: 0.5, type: "schnell" },
-        "Schnitzel": { keFactor: 1.25, type: "langsam", info: "1 kleines Schnitzel = 200g" },
-        "Döner": { keFactor: 1.72, type: "langsam", info: "1 Döner ca.350g" },
-        "Maultaschen": { keFactor: 2, type: "neutral", info: "2 Maultschen ca 100g" },
-        "Pizza": { keFactor: 2.85, type: "langsam", info: "1 Pizza ca 350g bei 24cm" },
-        "Milch": { keFactor: 5, type: "neutral" },
-        "Orangen": { keFactor: 10, type: "langsam" },
-        "Schokolade": { keFactor: 60, type: "schnell" },
-        "Birne": { keFactor: 10, type: "langsam" },
-        "Traubenzucker": { keFactor: 100, type: "schnell" },
+        "Weizenbrötchen": { keFactor: 5, type: "neutral" },
+        "Weizenmischbrot": { keFactor: 4, type: "schnell" },
+        "Winzerbrötchen": { keFactor: 3.7, type: "neutral" },
     };
 
     let foodList = [];
@@ -359,7 +363,8 @@
     }
 
     function updateTotals() {
-        document.getElementById("totalKEBox").innerText = `Gesamt KE: ${totalKE.toFixed(2)} KE`;
+        const keFactor = parseFloat(document.getElementById("keFactor").value) || 1;
+        document.getElementById("totalKEBox").innerText = `Gesamt KE: ${(totalKE * keFactor).toFixed(2)} KE`;
         document.getElementById("totalWeightBox").innerText = `Gesamtgewicht: ${totalWeight} g`;
         document.getElementById("portionSize").innerText = foodList.length;
     }
