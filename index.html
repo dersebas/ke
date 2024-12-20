@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KE-Rechner</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/8a47f7e5b3.js" crossorigin="anonymous"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap');
         html, body {
@@ -38,7 +39,7 @@
             text-align: center;
             margin: 20px 0;
             font-weight: 900;
-            font-size: 36px;
+            font-size: 26px;
             color: #BDBDBD;
             background-color: transparent;
             font-family: 'Poppins';
@@ -150,7 +151,7 @@
             color: #ffffff;
             height: 50px;
             line-height: 50px;
-            font-size: 24px;
+            font-size: 17px;
             font-weight: 900;
             margin-top: 30px;
             font-family: 'Poppins'
@@ -158,9 +159,8 @@
 
         #portionLabel {
             text-align: center;
-            font-size: 18px;
+            font-size: 17px;
             color: #ffffff;
-            margin-top: 5px;
             display: none;
             font-weight: 900;
             background-color: transparent;
@@ -176,8 +176,8 @@
             justify-content: center;
             border-radius: 5px;
             transition: background-color 0.3s ease;
-            font-size: 10px; 
-            background-color: transparent; /* Hintergrund transparent */
+            font-size: 11px; 
+            background-color: transparent; 
         }
 
         .delete-btn:hover {
@@ -200,10 +200,10 @@
 <div class="container">
     <h2>Kohlenhydrate Rechner</h2>
 
-    <input type="text" id="foodSearch" placeholder="Was möchtest du essen?" oninput="showSuggestions()" />
+    <input type="text" id="foodSearch" placeholder="lebensmittel auswahl" oninput="showSuggestions()" />
     <div id="foodSuggestions"></div>
     
-    <input type="number" id="foodAmount" placeholder="Wie viel gramm?" />
+    <input type="number" id="foodAmount" placeholder="wie viel gramm" />
     
     <button onclick="addFood()">Berechnen</button>
     
