@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KE-Rechner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/8a47f7e5b3.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+    <style>
+     html, body {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+        position: relative;
+        color: #E0E0E0;
+        background: url('https://4kwallpapers.com/images/walls/thumbs_3t/5889.jpg') no-repeat center center fixed;
+        background-size: cover;
+    }
+
+    .overlay-bg {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
+        background: rgba(0,0,0,0.1);
+        backdrop-filter: blur(17px);
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .container {
+        width: 90vw;
+        max-width: 700px;
+        padding: 40px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: rgba(0, 0, 0, 0.4);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        position: relative;
+        z-index: 1;
+        margin: 40px auto;
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        font-weight: 900;
+        font-size: 32px;
+        color: #FFFFFF;
+        text-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
+    }
+
+/* Input Group Styling */
+.input-group {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* General Input Rules */
+input, select {
+    width: 100%;
+    height: 60px;
+    font-size: 20px;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none;
+    border-radius: 12px;
+    background-color: rgba(60, 60, 60, 0.07);
+    color: #E0E0E0;
+    box-sizing: border-box;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.3s ease;
+    font-family: 'Poppins';
+}
+
+/* Specific Padding for Food Input */
+#foodSearch {
+    padding: 0 11px 0 5px;
+}
+
+/* Specific Padding for Amount Input */
+#foodAmount {
+    padding: 0 15px;
+}
+
+.input-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 22px;
+    pointer-events: none;
+}
+
+input:focus, select:focus {
+    border-color: #606060;
+    box-shadow: 0 0 15px rgba(60, 60, 60, 0.6);
+    background-color: rgba(60, 60, 60, 0.12);
+}
+
+input::placeholder {
+    color: rgba(224, 224, 224, 0.7);
+    font-weight: 400;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* BUtton Styling */
+.button-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+
+
+.calculate-button {
+    border: none;
+    box-shadow: none;
+    background-color: rgba(60, 60, 60, 0.2);
+    color: #FFFFFF;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    font-weight: 700;
+    font-size: 22px;
+    font-family: 'Poppins';
+    width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    box-sizing: border-box;
+    line-height: normal;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 12px;
+
+
+}
+
+/* Button Styling for Mobile Devices */
+@media (max-width: 600px) {
+    .calculate-button {
+        /* Hier können Sie die Positionierung der Beschriftung anpassen */
+        padding-left: 20px; /* Beispiel: Verschiebt die Beschriftung nach rechts */
+        text-align: left; /* Beispiel: Richtet die Beschriftung linksbündig aus */
+    }
+    #foodSearch {
+    padding: 0px;
+    }
+    #foodAmount {
+    padding: 0px;
+}
+}
+
+.calculate-button:hover {
+    background-color: rgba(60, 60, 60, 0.35);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(60, 60, 60, 0.4);
+}
+
+/* Suggestions Box */
+#foodSuggestions {
+    max-height: 250px;
+    background-color: rgba(32, 32, 32, 1);
+    width: calc(100% - 80px);
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none;
+    overflow-y: auto;
+    position: absolute;
+    padding: 0;
+    font-weight: 500;
+    top: 210px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #BDBDBD;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(60, 60, 60, 0.3) transparent;
+}
+
+#foodSuggestions::-webkit-scrollbar {
+    width: 8px;
+}
+
+#foodSuggestions::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#foodSuggestions::-webkit-scrollbar-thumb {
+    background-color: rgba(60, 60, 60, 0.3);
+    border-radius: 4px;
+}
+
+#foodSuggestions div {
+    padding: 15px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: 17px;
+    color: #E0E0E0;
+    background-color: transparent;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+#foodSuggestions div:last-child {
+    border-bottom: none;
+}
+
+#foodSuggestions div:hover,
+#foodSuggestions div.active-suggestion {
+    background-color: rgba(60, 60, 60, 0.08);
+}
+
+#foodSuggestions div span {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+    display: block;
+    margin-top: 3px;
+}
+
+/* Food List Styling */
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 25px;
+    width: 100%;
+    color: #E0E0E0;
+}
+
+ul li {
+    background: rgba(60, 60, 60, 0.08);
+    padding: 18px 20px;
+    margin: 12px 0;
+    border-radius: 12px;
+    color: #E0E0E0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-sizing: border-box;
+    font-size: 17px;
+    font-weight: 600;
+    flex-wrap: nowrap;
+    transition: background-color 0.5s ease, transform 0.5s ease, box-shadow 0.5s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    position: relative;
+    overflow: hidden;
+}
+
+ul li:hover {
+    background-color: rgba(60, 60, 60, 0.12);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35);
+}
+
+ul li .item-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    text-align: left;
+    margin-right: 15px;
+}
+
+ul li .main-info {
+    font-size: 18px;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+ul li .item-info {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 400;
+}
+
+/* Icon Styling */
+.food-type-icon {
+    font-size: 1.1em;
+    margin-right: 8px;
+    display: inline-block;
+    width: 20px;
+    text-align: center;
+}
+
+.food-type-icon.schnell {
+    color: #FFD700;
+}
+
+.food-type-icon.langsam {
+    color: #ADD8E6;
+}
+
+.food-type-icon.neutral {
+    color: #B0B0B0;
+}
+
+/* Totals Box Styling */
+        #summaryBox {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            background: transparent;
+            border-radius: 8px;
+            padding: 14px 18px;
+            font-size: 20px;
+            font-weight: 700;
+            margin: 12px 0;
+            text-align: center;
+        }
+        #totalKEBox, #totalWeightBox {
+            background: none;
+            padding: 0;
+            margin: 0;
+            font-size: inherit;
+            font-weight: inherit;
+            border-radius: 0;
+            width: auto;
+        }
+        @media (max-width: 500px) {
+            .container { width: 97vw; }
+            #summaryBox { flex-direction: column; gap: 5px; font-size: 17px; }
+        }
+        input, button {
+            width: 100%;
+            font-size: 16px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 7px;
+            padding: 10px;
+        }
+        button {
+            background: #288aff;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+.flash-effect {
+    animation: flash 0.5s ease-in-out;
+}
+
+@keyframes box-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(70, 70, 70, 0.38);
+    background: transparent;
+    outline: none;
+  }
+  40% {
+    box-shadow: 0 0 14px 8px rgba(70, 70, 70, 0.38), 0 0 40px 18px rgba(70, 70, 70, 0.38);
+    background: rgba(70, 70, 70, 0.38); /* NUR während Animation sichtbar */
+    outline: none;
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(70, 70, 70, 0.38);
+    background: transparent;
+    outline: none;
+  }
+}
+
+#summaryBox.glow-animate {
+  animation: box-glow 0.5s ease;
+}
+
+#portionLabel {
+    text-align: center;
+    font-size: 17px;
+    color: #ffffff;
+    display: none;
+    font-weight: 700;
+    background-color: transparent;
+    margin-top: 20px;
+}
+
+/* Clear All Button */
+#clearAllBtn {
+    background-color: rgba(80, 80, 80, 0.2);
+    color: #FFFFFF;
+    margin-top: 20px;
+    display: none;
+}
+
+#clearAllBtn:hover {
+    background-color: rgba(80, 80, 80, 0.35);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(80, 80, 80, 0.4);
+}
+
+/* Delete Indicator */
+.delete-indicator {
+    background-color: rgba(255, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .container {
+        padding: 25px;
+    }
+    h2 {
+        font-size: 28px;
+    }
+    input, select, .calculate-button {
+        font-size: 17px;
+        height: 55px;
+    }
+    #foodSearch {
+        padding: 0 15px 0 5px;
+    }
+    #foodAmount {
+        padding: 0 15px;
+    }
+    .input-icon {
+        font-size: 20px;
+        left: 15px;
+    }
+    #foodSuggestions {
+        width: calc(100% - 50px);
+        max-height: 200px;
+        top: 180px;
+    }
+    #foodSuggestions div {
+        font-size: 15px;
+        padding: 12px 15px;
+    }
+    ul li {
+        font-size: 15px;
+        padding: 15px;
+        flex-direction: row;
+        align-items: center;
+    }
+    ul li .item-content {
+        flex-grow: 1;
+        margin-right: 10px;
+        min-width: 0;
+        word-break: break-word;
+    }
+    ul li .main-info {
+        font-size: 16px;
+        margin-bottom: 0;
+        flex-wrap: wrap;
+    }
+    ul li .item-info {
+        font-size: 12px;
+        margin-top: 3px;
+        word-break: break-word;
+    }
+    #totalKEBox, #totalWeightBox {
+        font-size: 18px;
+        height: 60px;
+        line-height: 60px;
+    }
+    #portionLabel {
+        font-size: 15px;
+        margin-top: 15px;
+    }
+    }
+
+    @keyframes border-glow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(30,144,255, 0.8), 0 0 0 0 rgba(30,144,255,0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(30,144,255, 0.5), 0 0 10px 8px rgba(30,144,255,0.2);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(30,144,255, 0);
+  }
+}
+.calculate-button.animate-border {
+  animation: border-glow 0.5s ease;
+}
+    </style>
+</head>
+<body>
+<div class="overlay-bg"></div>
+<div class="container">
+    <h2>Kohlenhydrate Rechner</h2>
+
+    <div class="input-group">
+        <i class="fas fa-utensils input-icon"></i>
+        <input type="text" id="foodSearch" placeholder="Lebensmittel" oninput="showSuggestions()" />
+    </div>
+    <div id="foodSuggestions"></div>
+
+    <div class="input-group">
+        <i class="fas fa-weight input-icon"></i>
+        <input type="number" id="foodAmount" placeholder="Menge in Gramm" />
+    </div>
+
+    <div class="button-container">
+        <button class="calculate-button" onclick="addFood()">Berechnen</button>
+    </div>
+    <button id="clearAllBtn" onclick="clearAllFood()">Alles löschen</button>
+
+    <ul id="foodList"></ul>
+
+    <div id="summaryBox">
+        <div id="totalKEBox">Gesamt KE: 0</div>
+        <div id="totalWeightBox">Gesamtgewicht: 0 g</div>
+    </div>
+    <div id="portionLabel">Menge: <span id="portionSize">0</span> Lebensmittel</div>
+</div>
+
+<script>
+    let foodData = {
+        "Bratkartoffel": { keFactor: 1.8, type: "neutral" },
+        "Nudeln (eifrei)": { keFactor: 3, type: "neutral" },
+        "Nudeln (eihaltig)": { keFactor: 2.3, type: "neutral" },
+        "Dinkelbrot": { keFactor: 3.69, type: "neutral" },
+        "Vollkornbrot": { keFactor: 4, type: "neutral" },
+        "Basmatireis": { keFactor: 2.4, type: "neutral" },
+        "Reis": { keFactor: 2.81, type: "neutral" },
+        "Vollkornbrötchen": { keFactor: 3.3, type: "neutral" },
+        "Weizenmischbrot": { keFactor: 5.2, type: "schnell" },
+        "Roggenmischbrot": { keFactor: 4, type: "neutral" },
+        "Weizenbrötchen": { keFactor: 4.9, type: "neutral" },
+        "Nusszopf": { keFactor: 5, type: "neutral" },
+        "Berliner": { keFactor: 5.5, type: "schnell" },
+        "Schokocrossiant": { keFactor: 4, type: "schnell" },
+        "Crossiant": { keFactor: 3.8, type: "neutral" },
+        "Laugenbrezel": { keFactor: 6.3, type: "neutral" },
+        "Laugenbrötchen": { keFactor: 4.7, type: "neutral" },
+        "Winzerbrötchen": { keFactor: 3.7, type: "neutral" },
+        "Mohnbrötchen": { keFactor: 4.2, type: "neutral" },
+        "Schusterjunge": { keFactor: 4.8, type: "neutral" },
+        "Backi": { keFactor: 5.6, type: "neutral" },
+        "Flute": { keFactor: 5.5, type: "neutral" },
+        "Opa`s Landbrot": { keFactor: 5, type: "neutral" },
+        "Urkruste": { keFactor: 4.6, type: "neutral" },
+        "Herzschlang": { keFactor: 4.1, type: "neutral" },
+        "Kartoffeln": { keFactor: 1.54, type: "neutral" },
+        "Kartoffelpüree": { keFactor: 1, type: "neutral" },
+        "Kartoffelpuffer": { keFactor: 2.22, type: "neutral" },
+        "Pommes": { keFactor: 4.1, type: "neutral" },
+        "Kroketten": { keFactor: 2.5, type: "neutral" },
+        "Gnocchi": { keFactor: 3, type: "neutral" },
+        "Vollkornreis": { keFactor: 3, type: "neutral" },
+        "Reis": { keFactor: 2.5, type: "neutral" },
+        "Tortellini": { keFactor: 2.85, type: "neutral" },
+        "Haferflocken": { keFactor: 6.66, type: "neutral" },
+        "Apfel": { keFactor: 2.1, type: "neutral" },
+        "Banane": { keFactor: 1.25, type: "neutral" },
+        "Birne": { keFactor: 1.27, type: "neutral" },
+        "Brombeere": { keFactor: 0.625, type: "neutral" },
+        "Erdbeeren": { keFactor: 0.55, type: "neutral" },
+        "Heidelbeeren": { keFactor: 0.625, type: "neutral" },
+        "Himbeeren": { keFactor: 0.476, type: "neutral" },
+        "Johannisbeere (rot)": { keFactor: 0.5, type: "neutral" },
+        "Johannisbeere (schwarz)": { keFactor: 0.667, type: "neutral" },
+        "Kiwi": { keFactor: 0.833, type: "neutral" },
+        "Mango": { keFactor: 1.25, type: "neutral" },
+        "Nektariene": { keFactor: 1.25, type: "neutral" },
+        "Mandariene": { keFactor: 0.74, type: "neutral" },
+        "Orange": { keFactor: 0.8, type: "neutral" },
+        "Pfirsich": { keFactor: 0.883, type: "neutral" },
+        "Wassermelone": { keFactor: 0.526, type: "neutral" },
+        "Weintraube": { keFactor: 1.538, type: "neutral" },
+        "Milch": { keFactor: 0.5, type: "neutral" },
+        "Honig": { keFactor: 8.333, type: "schnell" },
+        "Nuss-Nougat-Creme": { keFactor: 5, type: "langsam" },
+        "Ketchup": { keFactor: 2.5, type: "neutral" },
+        "Mais": { keFactor: 1.667, type: "neutral" },
+        "Orangensaft": { keFactor: 0.91, type: "schnell" },
+        "Bionade": { keFactor: 0.5, type: "schnell" },
+        "Schnitzel": { keFactor: 1.25, type: "langsam", info: "1 kleines Schnitzel = 200g" },
+        "Döner": { keFactor: 1.72, type: "langsam", info: "1 Döner ca.350g" },
+        "Maultaschen": { keFactor: 2, type: "neutral", info: "2 Maultschen ca 100g" },
+        "Pizza": { keFactor: 2.85, type: "langsam", info: "1 Pizza ca 350g bei 24cm" },
+        "Milch": { keFactor: 0.5, type: "neutral" },
+        "Schokolade": { keFactor: 6.1, type: "schnell" },
+    };
+
+    let totalKE = 0;
+let totalWeight = 0;
+function addValues() {
+    const ke = parseFloat(document.getElementById('keInput').value) || 0;
+    const weight = parseFloat(document.getElementById('weightInput').value) || 0;
+    totalKE += ke;
+    totalWeight += weight;
+    document.getElementById('totalKEBox').textContent = `Gesamt KE: ${totalKE}`;
+    document.getElementById('totalWeightBox').textContent = `Gesamtgewicht: ${totalWeight} g`;
+    document.getElementById('keInput').value = '';
+    document.getElementById('weightInput').value = '';
+}
+
+    const icons = {
+        schnell: '<i class="fas fa-bolt"></i>',
+        langsam: '<i class="fas fa-hourglass-half"></i>',
+        neutral: '<i class="fas fa-circle"></i>'
+    };
+
+    function loadFoodData() {
+        const savedFoodList = JSON.parse(localStorage.getItem('foodList'));
+        if (savedFoodList) {
+            foodList = savedFoodList;
+            updateFoodList();
+            updateTotals();
+            updateClearAllButtonVisibility();
+        }
+    }
+
+    window.onload = loadFoodData;
+
+    function addFood() {
+        const foodSearchInput = document.getElementById("foodSearch");
+        const foodAmountInput = document.getElementById("foodAmount");
+
+        const foodName = foodSearchInput.value.trim();
+        const foodAmount = parseFloat(foodAmountInput.value);
+
+        if (!foodData[foodName] || isNaN(foodAmount) || foodAmount <= 0) {
+            alert("Bitte wähle ein Lebensmittel aus der Liste und gib eine gültige Menge ein.");
+            return;
+        }
+
+        const keFactor = foodData[foodName].keFactor;
+        const foodType = foodData[foodName].type;
+        const info = foodData[foodName].info || "";
+
+        const keAmount = (keFactor * foodAmount) / 100;
+
+        foodList.push({ name: foodName, keAmount, totalWeight: foodAmount, type: foodType, info });
+
+        updateFoodList();
+        updateTotals();
+        saveData();
+        updateClearAllButtonVisibility();
+
+        foodSearchInput.value = "";
+        foodAmountInput.value = "";
+        document.getElementById("foodSuggestions").innerHTML = "";
+        document.getElementById("foodSuggestions").style.display = "none";
+
+        document.getElementById("totalKEBox").classList.add("flash-effect");
+        document.getElementById("totalWeightBox").classList.add("flash-effect");
+        setTimeout(() => {
+            document.getElementById("totalKEBox").classList.remove("flash-effect");
+            document.getElementById("totalWeightBox").classList.remove("flash-effect");
+        }, 500);
+    }
+
+    function updateFoodList() {
+    const foodListElement = document.getElementById("foodList");
+    foodListElement.innerHTML = "";
+
+    foodList.forEach((food, index) => {
+        const li = document.createElement("li");
+        const iconHtml = `<span class="food-type-icon ${food.type}">${icons[food.type] || ''}</span>`;
+
+        li.innerHTML = `
+            <div class="item-content">
+                <span class="main-info">${iconHtml} ${food.totalWeight}g ${food.name}: ${food.keAmount.toFixed(2)} KE</span>
+                ${food.info ? `<span class="item-info">${food.info}</span>` : ''}
+            </div>
+        `;
+        foodListElement.appendChild(li);
+
+        const hammer = new Hammer(li);
+        hammer.on("panstart panmove panend", function(e) {
+            if (e.type === "panstart") {
+                li.style.transition = "none";
+            } else if (e.type === "panmove") {
+                let deltaX = e.deltaX;
+                if (deltaX > 0) {
+                    deltaX = Math.min(deltaX, 300);
+                } else {
+                    deltaX = Math.max(deltaX, -300);
+                }
+                li.style.transform = `translateX(${deltaX}px)`;
+
+                const distance = Math.abs(deltaX);
+                if (distance > 100) {
+                    const opacity = Math.min(0.1 + (distance - 100) / 300, 0.3);
+                    li.style.backgroundColor = `rgba(255, 0, 0, ${opacity})`;
+                } else {
+                    li.style.backgroundColor = 'rgba(60, 60, 60, 0.08)';
+                }
+            } else if (e.type === "panend") {
+                li.style.transition = "transform 0.5s ease, background-color 0.5s ease";
+                if (Math.abs(e.deltaX) > 100) {
+                    li.style.transform = `translateX(${e.deltaX > 0 ? "300%" : "-300%"})`;
+                    li.style.backgroundColor = 'rgba(255, 0, 0, 0.3)';
+                    setTimeout(() => {
+                        foodList.splice(index, 1);
+                        updateFoodList();
+                        updateTotals();
+                        saveData();
+                        updateClearAllButtonVisibility();
+
+                        document.getElementById("totalKEBox").classList.add("flash-effect");
+                        document.getElementById("totalWeightBox").classList.add("flash-effect");
+                        setTimeout(() => {
+                            document.getElementById("totalKEBox").classList.remove("flash-effect");
+                            document.getElementById("totalWeightBox").classList.remove("flash-effect");
+                        }, 500);
+                    }, 500);
+                } else {
+                    li.style.transform = "translateX(0)";
+                    li.style.backgroundColor = 'rgba(60, 60, 60, 0.08)';
+                }
+            }
+        });
+    });
+}
+
+    function removeFood(index) {
+        foodList.splice(index, 1);
+
+        updateFoodList();
+        updateTotals();
+        saveData();
+        updateClearAllButtonVisibility();
+
+        document.getElementById("totalKEBox").classList.add("flash-effect");
+        document.getElementById("totalWeightBox").classList.add("flash-effect");
+        setTimeout(() => {
+            document.getElementById("totalKEBox").classList.remove("flash-effect");
+            document.getElementById("totalWeightBox").classList.remove("flash-effect");
+        }, 500);
+    }
+
+    function clearAllFood() {
+        if (!confirm("Möchtest du wirklich die gesamte Liste löschen?")) {
+            return;
+        }
+
+        foodList = [];
+        updateFoodList();
+        updateTotals();
+        saveData();
+        updateClearAllButtonVisibility();
+
+        document.getElementById("totalKEBox").classList.add("flash-effect");
+        document.getElementById("totalWeightBox").classList.add("flash-effect");
+        setTimeout(() => {
+            document.getElementById("totalKEBox").classList.remove("flash-effect");
+            document.getElementById("totalWeightBox").classList.remove("flash-effect");
+        }, 500);
+    }
+
+function updateTotals() {
+    totalKE = foodList.reduce((sum, item) => sum + item.keAmount, 0);
+    totalWeight = foodList.reduce((sum, item) => sum + item.totalWeight, 0);
+    document.getElementById("totalKEBox").innerText = `Gesamt KE: ${totalKE.toFixed(2)} KE`;
+    document.getElementById("totalWeightBox").innerText = `Gesamtgewicht: ${totalWeight} g`;
+    document.getElementById("portionSize").innerText = foodList.length;
+    document.getElementById("portionLabel").style.display = foodList.length > 0 ? "block" : "none";
+
+    // --- Hier die Animation kurz triggern ---
+    const summaryBox = document.getElementById("summaryBox");
+    summaryBox.classList.remove('glow-animate');
+    void summaryBox.offsetWidth; // Reflow, damit Animation neu startet
+    summaryBox.classList.add('glow-animate');
+}
+    function saveData() {
+        localStorage.setItem('foodList', JSON.stringify(foodList));
+    }
+
+    function updateClearAllButtonVisibility() {
+        const clearAllBtn = document.getElementById("clearAllBtn");
+        if (foodList.length >= 2) {
+            clearAllBtn.style.display = "block";
+        } else {
+            clearAllBtn.style.display = "none";
+        }
+    }
+
+    function showSuggestions() {
+        const input = document.getElementById("foodSearch").value.trim().toLowerCase();
+        const suggestions = Object.keys(foodData).filter(food => food.toLowerCase().startsWith(input));
+        const suggestionsBox = document.getElementById("foodSuggestions");
+
+        if (suggestions.length > 0 && input) {
+            suggestions.sort();
+            suggestionsBox.innerHTML = suggestions.map(food => {
+                const foodInfo = foodData[food].info ? `<span>${foodData[food].info}</span>` : "";
+                return `<div onclick="selectSuggestion('${food}')">${food}${foodInfo}</div>`;
+            }).join('');
+            suggestionsBox.style.display = "block";
+        } else {
+            suggestionsBox.style.display = "none";
+        }
+    }
+
+    function selectSuggestion(food) {
+        document.getElementById("foodSearch").value = food;
+        document.getElementById("foodSuggestions").style.display = "none";
+        document.getElementById("foodAmount").focus();
+    }
+
+    document.addEventListener('click', function(event) {
+        const foodSuggestions = document.getElementById('foodSuggestions');
+        const foodSearch = document.getElementById('foodSearch');
+        if (!foodSuggestions.contains(event.target) && event.target !== foodSearch) {
+            foodSuggestions.style.display = 'none';
+        }
+    });
+
+    document.getElementById('foodSearch').addEventListener('keydown', function(e) {
+        const suggestionsBox = document.getElementById("foodSuggestions");
+        let activeSuggestion = suggestionsBox.querySelector('.active-suggestion');
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (activeSuggestion) {
+                const nextSibling = activeSuggestion.nextElementSibling;
+                if (nextSibling) {
+                    activeSuggestion.classList.remove('active-suggestion');
+                    nextSibling.classList.add('active-suggestion');
+                    nextSibling.scrollIntoView({ block: 'nearest' });
+                }
+            } else if (suggestionsBox.firstChild) {
+                suggestionsBox.firstChild.classList.add('active-suggestion');
+                suggestionsBox.firstChild.scrollIntoView({ block: 'nearest' });
+            }
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (activeSuggestion && activeSuggestion.previousElementSibling) {
+                activeSuggestion.classList.remove('active-suggestion');
+                activeSuggestion.previousElementSibling.classList.add('active-suggestion');
+                activeSuggestion.previousElementSibling.scrollIntoView({ block: 'nearest' });
+            }
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (activeSuggestion) {
+                selectSuggestion(activeSuggestion.innerText.split('\n')[0]);
+            } else {
+                addFood();
+            }
+        }
+ document.querySelector('.calculate-button').addEventListener('click', function() {
+  this.classList.remove('animate-border');
+  void this.offsetWidth; // Reflow für Neustart der Animation
+  this.classList.add('animate-border');
+});
+    });
+    
+</script>
+</body>
+</html>
