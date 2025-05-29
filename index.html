@@ -590,6 +590,7 @@ ul li .item-info {
 
     let totalKE = 0;
 let totalWeight = 0;
+let foodList = [];
 function addValues() {
     const ke = parseFloat(document.getElementById('keInput').value) || 0;
     const weight = parseFloat(document.getElementById('weightInput').value) || 0;
@@ -846,13 +847,15 @@ function updateTotals() {
                 addFood();
             }
         }
- document.querySelector('.calculate-button').addEventListener('click', function() {
-  this.classList.remove('animate-border');
-  void this.offsetWidth; // Reflow für Neustart der Animation
-  this.classList.add('animate-border');
-});
     });
-    
+
+    // Animation für den Berechnen-Button (nur einmalig hinzufügen!)
+    document.querySelector('.calculate-button').addEventListener('click', function() {
+        this.classList.remove('animate-border');
+        void this.offsetWidth; // Reflow für Neustart der Animation
+        this.classList.add('animate-border');
+    });
+
 </script>
 </body>
 </html>
